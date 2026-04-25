@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: uno-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  game-server-1:
+    build: ./server
+    container_name: uno-server-1
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ID=game-node-1
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  game-server-2:
+    build: ./server
+    container_name: uno-server-2
+    ports:
+      - "3002:3001"
+    environment:
+      - PORT=3001
+      - NODE_ID=game-node-2
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  redis-data:
