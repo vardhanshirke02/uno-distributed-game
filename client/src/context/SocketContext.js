@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 
 const SocketContext = createContext(null);
 
-const SERVER_URL = process.env.REACT_APP_SERVER_URL || 'http://localhost:3001';
+const SERVER_URL = process.env.REACT_APP_SERVER_URL || 'https://uno-server-1ibp.onrender.com';
 
 export function SocketProvider({ children }) {
   const [socket, setSocket] = useState(null);
